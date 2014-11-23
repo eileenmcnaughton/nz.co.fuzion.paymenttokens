@@ -83,6 +83,6 @@ function paymenttokens_civicrm_alter_drupal_entities(&$whitelist) {
  *
  * @param $labels
  */
-function paymenttokens_civicrm_alter_drupal_entity_labels($labels) {
-  $labels['payment_token'] = 'code';
+function paymenttokens_civicrm_alter_drupal_entity_labels(&$labels) {
+  $labels['civicrm_payment_token'] = 'code';
 }
