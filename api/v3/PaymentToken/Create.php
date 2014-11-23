@@ -10,8 +10,4 @@ function civicrm_api3_payment_token_create($params) {
 }
 
 function _civicrm_api3_payment_token_create_spec(&$params) {
-  $params['expiry_date'] = array(
-    'type' => 4,
-    'title' => 'Expiry Date',
-  );
 }
