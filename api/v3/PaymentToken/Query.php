@@ -27,7 +27,6 @@ function civicrm_api3_payment_token_query($params) {
       if (!empty($existingToken['values'][0])) {
         $token = array_merge($existingToken['values'][0], $token);
       }
-      print_r($token);
       $tokenCreate = civicrm_api3('payment_token', 'create', $token);
     }
     catch (Exception $e) {
