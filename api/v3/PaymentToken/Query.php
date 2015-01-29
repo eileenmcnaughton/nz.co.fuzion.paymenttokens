@@ -22,7 +22,11 @@ function civicrm_api3_payment_token_query($params) {
   $result = array();
   while ($token->fetch()) {
     try {
-      $tokenParams = (array) $token;
+      $tokenParams = array(
+        'contribution_recur_id' => $token->contribution_recur_id,
+        'payment_processor_id' => $token->payment_processor_id,
+        'token_id' => $token->token_id,
+      );
       $processorTypeID = civicrm_api3('payment_processor', 'getvalue', array(
           'id' => $token->payment_processor_id,
           'return' => 'payment_processor_type_id'
@@ -35,18 +39,17 @@ function civicrm_api3_payment_token_query($params) {
           'contribution_recur_id' => $token->contribution_recur_id,
           'sequential' => 1
         ));
+
       $result[$token->contribution_recur_id] = $query['values'][0];
       if (!empty($query['values'][0])) {
         $tokenParams = array_merge($tokenParams, $query['values'][0]);
       }
+      $tokenCreate = civicrm_api3('payment_token', 'create', $tokenParams);
+      $result[$token->contribution_recur_id]['token_id'] = $tokenCreate['id'];
     }
     catch (Exception $e) {
       $result[$token->contribution_recur_id] = array('message' => $e->getMessage());
     }
-
-    $tokenCreate = civicrm_api3('payment_token', 'create', $tokenParams);
-    $result[$token->contribution_recur_id]['token_id'] = $tokenCreate['id'];
-
   }
   return civicrm_api3_create_success($result, $params);
 }
