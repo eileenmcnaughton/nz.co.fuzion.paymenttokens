@@ -65,6 +65,12 @@ class CRM_Paymenttokens_Upgrader_Base {
     return call_user_func_array(array($instance, $method), $args);
   }
 
+  /**
+   * Class constructor.
+   *
+   * @param $extensionName
+   * @param $extensionDir
+   */
   public function __construct($extensionName, $extensionDir) {
     $this->extensionName = $extensionName;
     $this->extensionDir = $extensionDir;
@@ -287,11 +293,13 @@ class CRM_Paymenttokens_Upgrader_Base {
   }
 
   public function onUpgrade($op, CRM_Queue_Queue $queue = NULL) {
-    switch($op) {
+    switch ($op) {
       case 'check':
         return array($this->hasPendingRevisions());
+
       case 'enqueue':
         return $this->enqueuePendingRevisions($queue);
+
       default:
     }
   }
