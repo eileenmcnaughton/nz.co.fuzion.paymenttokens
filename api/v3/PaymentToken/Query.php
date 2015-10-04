@@ -11,7 +11,7 @@
 function civicrm_api3_payment_token_query($params) {
   $token = CRM_Core_DAO::executeQuery(
     "SELECT r.id as contribution_recur_id, r.payment_processor_id, r.processor_id, t.id as token_id, r.contact_id
-     FROM civicrm_contribution_recur r LEFT JOIN civicrm_payment_token t ON t.code= r.processor_id
+     FROM civicrm_contribution_recur r LEFT JOIN civicrm_payment_token t ON t.token = r.processor_id
      WHERE (t.expiry_date IS NULL OR t.expiry_date < DATE_ADD(NOW(), INTERVAL 6 WEEK))
      AND r.processor_id IS NOT NULL
      AND r.payment_processor_id IS NOT NULL"
