@@ -29,11 +29,11 @@ function civicrm_api3_payment_token_query($params) {
       );
       $processorTypeID = civicrm_api3('payment_processor', 'getvalue', array(
           'id' => $token->payment_processor_id,
-          'return' => 'payment_processor_type_id'
+          'return' => 'payment_processor_type_id',
         ));
       $processor = civicrm_api3('payment_processor_type', 'getvalue', array(
           'id' => $processorTypeID,
-          'return' => 'name'
+          'return' => 'name',
         ));
       $query = civicrm_api3($processor, 'tokenquery', array(
           'contribution_recur_id' => $token->contribution_recur_id,
