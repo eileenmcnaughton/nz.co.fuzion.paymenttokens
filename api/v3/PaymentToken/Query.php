@@ -36,6 +36,7 @@ function civicrm_api3_payment_token_query($params) {
       }
 
       $tokenCreate = civicrm_api3('payment_token', 'create', $tokenParams);
+      civicrm_api3('ContributionRecur', 'create', array('id' => $token->contribution_recur_id, 'payment_token_id' => $tokenCreate['id']));
       $result[$token->contribution_recur_id]['token_id'] = $tokenCreate['id'];
     }
     catch (Exception $e) {
