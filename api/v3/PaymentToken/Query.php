@@ -6,10 +6,7 @@
  * Time: 10:36 AM
  */
 /**
- * Created by PhpStorm.
- * User: eileen
- * Date: 19/11/2014
- * Time: 8:35 PM
+ * Query details of a token.
  */
 function civicrm_api3_payment_token_query($params) {
   $token = CRM_Core_DAO::executeQuery(
@@ -27,17 +24,10 @@ function civicrm_api3_payment_token_query($params) {
         'payment_processor_id' => $token->payment_processor_id,
         'id' => $token->token_id,
       );
-      $processorTypeID = civicrm_api3('payment_processor', 'getvalue', array(
-          'id' => $token->payment_processor_id,
-          'return' => 'payment_processor_type_id',
-        ));
-      $processor = civicrm_api3('payment_processor_type', 'getvalue', array(
-          'id' => $processorTypeID,
-          'return' => 'name',
-        ));
+      $processor = getProcessorName($token->payment_processor_id);
       $query = civicrm_api3($processor, 'tokenquery', array(
           'contribution_recur_id' => $token->contribution_recur_id,
-          'sequential' => 1
+          'sequential' => 1,
         ));
 
       $result[$token->contribution_recur_id] = $query['values'][0];
@@ -53,4 +43,27 @@ function civicrm_api3_payment_token_query($params) {
     }
   }
   return civicrm_api3_create_success($result, $params);
+}
+
+/**
+ * Get the name (entity) of the processor in use.
+ *
+ * @param int $payment_processor_id
+ *
+ * @return string
+ * @throws \CiviCRM_API3_Exception
+ */
+function getProcessorName($payment_processor_id) {
+  static $processors = array();
+  if (empty($processors[$payment_processor_id])) {
+    $processorTypeID = civicrm_api3('payment_processor', 'getvalue', array(
+      'id' => $payment_processor_id,
+      'return' => 'payment_processor_type_id',
+    ));
+    $processors[$payment_processor_id] = civicrm_api3('payment_processor_type', 'getvalue', array(
+      'id' => $processorTypeID,
+      'return' => 'name',
+    ));
+  }
+  return $processors[$payment_processor_id];
 }
