@@ -52,7 +52,7 @@ function civicrm_api3_payment_token_query($params) {
  * @param int $payment_processor_id
  *
  * @return string
- * @throws \CiviCRM_API3_Exception
+ * @throws \CRM_Core_Exception
  */
 function getProcessorName($payment_processor_id) {
   static $processors = array();
