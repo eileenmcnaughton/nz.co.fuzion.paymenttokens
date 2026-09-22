@@ -16,19 +16,19 @@ function civicrm_api3_payment_token_query($params) {
      AND r.processor_id IS NOT NULL
      AND r.payment_processor_id IS NOT NULL"
   );
-  $result = array();
+  $result = [];
   while ($token->fetch()) {
     try {
-      $tokenParams = array(
+      $tokenParams = [
         'contribution_recur_id' => $token->contribution_recur_id,
         'payment_processor_id' => $token->payment_processor_id,
         'id' => $token->token_id,
-      );
+      ];
       $processor = getProcessorName($token->payment_processor_id);
-      $query = civicrm_api3($processor, 'tokenquery', array(
+      $query = civicrm_api3($processor, 'tokenquery', [
           'contribution_recur_id' => $token->contribution_recur_id,
           'sequential' => 1,
-        ));
+        ]);
 
       $result[$token->contribution_recur_id] = $query['values'][0];
       if (!empty($query['values'][0])) {
@@ -36,11 +36,11 @@ function civicrm_api3_payment_token_query($params) {
       }
 
       $tokenCreate = civicrm_api3('payment_token', 'create', $tokenParams);
-      civicrm_api3('ContributionRecur', 'create', array('id' => $token->contribution_recur_id, 'payment_token_id' => $tokenCreate['id']));
+      civicrm_api3('ContributionRecur', 'create', ['id' => $token->contribution_recur_id, 'payment_token_id' => $tokenCreate['id']]);
       $result[$token->contribution_recur_id]['token_id'] = $tokenCreate['id'];
     }
     catch (Exception $e) {
-      $result[$token->contribution_recur_id] = array('message' => $e->getMessage());
+      $result[$token->contribution_recur_id] = ['message' => $e->getMessage()];
     }
   }
   return civicrm_api3_create_success($result, $params);
@@ -55,16 +55,16 @@ function civicrm_api3_payment_token_query($params) {
  * @throws \CRM_Core_Exception
  */
 function getProcessorName($payment_processor_id) {
-  static $processors = array();
+  static $processors = [];
   if (empty($processors[$payment_processor_id])) {
-    $processorTypeID = civicrm_api3('payment_processor', 'getvalue', array(
+    $processorTypeID = civicrm_api3('payment_processor', 'getvalue', [
       'id' => $payment_processor_id,
       'return' => 'payment_processor_type_id',
-    ));
-    $processors[$payment_processor_id] = civicrm_api3('payment_processor_type', 'getvalue', array(
+    ]);
+    $processors[$payment_processor_id] = civicrm_api3('payment_processor_type', 'getvalue', [
       'id' => $processorTypeID,
       'return' => 'name',
-    ));
+    ]);
   }
   return $processors[$payment_processor_id];
 }
